@@ -1,0 +1,37 @@
+---
+import type { AlignedBlock } from "../../sanity/types";
+import CustomPortableText from "./CustomPortableText.astro";
+import { PUBLIC_SANITY_VISUAL_EDITING_ENABLED } from "astro:env/server";
+
+interface Props {
+  node: AlignedBlock;
+}
+
+const { node } = Astro.props;
+
+const alignment = PUBLIC_SANITY_VISUAL_EDITING_ENABLED
+  ? await import("@vercel/stega").then(({ vercelStegaClean }) =>
+      vercelStegaClean(node.alignment)
+    )
+  : node.alignment;
+---
+
+<>
+  {
+    node.content && (
+      <div
+        class="w-full"
+        class:list={[
+          {
+            "text-center": alignment === "center",
+            "text-left": alignment === "left" || !alignment,
+            "text-right": alignment === "right",
+            "text-justify": alignment === "justified",
+          },
+        ]}
+      >
+        <CustomPortableText value={node.content} />
+      </div>
+    )
+  }
+</>

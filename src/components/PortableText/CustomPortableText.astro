@@ -1,0 +1,36 @@
+---
+import type { Component, PortableTextProps } from "astro-portabletext/types";
+import { mergeComponents, PortableText } from "astro-portabletext";
+
+import AlignedBlock from "./AlignedBlock.astro";
+
+import type * as Sanity from "../../sanity/types";
+import SanityImage from "./SanityImage/index.astro";
+import ExternalImage from "./ExternalImage.astro";
+
+// TODO add missing components
+
+type Props = PortableTextProps;
+const { value, components: componentOverrides = {}, ...props } = Astro.props;
+
+type CustomComponents =
+  | Sanity.AlignedBlock
+  | Sanity.ImageWithAlt
+  | Sanity.ExternalImageWithAlt;
+const components: PortableTextProps["components"] = mergeComponents(
+  {
+    type: {
+      alignedBlock: AlignedBlock,
+      imageWithAlt: SanityImage,
+      externalImageWithAlt: ExternalImage,
+    } satisfies {
+      [Key in CustomComponents["_type"]]: Component;
+    },
+  },
+  componentOverrides
+);
+---
+
+<PortableText {...props} {components} value={value}>
+  <slot />
+</PortableText>

@@ -1,0 +1,95 @@
+---
+import type { GetStaticPaths, GetStaticPathsItem, Props } from "astro";
+import Layout from "../layouts/Layout.astro";
+import { getPage, getPages } from "../queries/page";
+import type { AstroComponent } from "../utils/types/astro";
+import type { GetSanityTypedSchemasFor } from "../utils/types/sanity";
+import Header from "../components/sections/Header.astro";
+import Hero from "../components/sections/Hero.astro";
+import Logos from "../components/sections/Logos.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+
+export const prerender = true;
+
+export const getStaticPaths = (async () => {
+  const pages = await getPages();
+
+  const uniquePathnames = pages.reduce((pathnames, { pathname }) => {
+    const current = pathname?.current;
+
+    if (current?.startsWith("/")) {
+      pathnames.add(current.slice(1));
+    }
+
+    return pathnames;
+  }, new Set<string>());
+
+  const pathnames = uniquePathnames
+    .keys()
+    .toArray()
+    .sort(
+      (pathnameA, pathnameB) =>
+        pathnameB.length - pathnameA.length ||
+        pathnameB.localeCompare(pathnameA)
+    )
+    .map(
+      (pathname) =>
+        ({
+          params: { pathname },
+        }) satisfies GetStaticPathsItem
+    );
+
+  return [...pathnames, { params: { pathname: undefined } }];
+}) satisfies GetStaticPaths;
+
+const { pathname } = Astro.params;
+
+console.log("pathname", pathname);
+
+const page = await getPage(`/${pathname ?? ""}`);
+
+console.log("data", page);
+
+type SectionSchemas = GetSanityTypedSchemasFor<"section">;
+
+type Sections = {
+  [Key in keyof SectionSchemas]: AstroComponent<SectionSchemas[Key]>;
+};
+
+const SECTIONS = {
+  "section.header": Header,
+  "section.hero": Hero,
+  "section.logos": Logos,
+  "section.testimonials": Testimonials,
+} satisfies Sections;
+---
+
+<Layout>
+  {
+    page?.sectionsBody?.map((section) => {
+      switch (section._type) {
+        case "section.header": {
+          const Component = SECTIONS[section._type];
+          return <Component {...section} />;
+        }
+        case "section.hero": {
+          const Component = SECTIONS[section._type];
+          return <Component {...section} />;
+        }
+        case "section.logos": {
+          const Component = SECTIONS[section._type];
+          return <Component {...section} />;
+        }
+        case "section.testimonials": {
+          const Component = SECTIONS[section._type];
+          return <Component {...section} />;
+        }
+        default: {
+          throw new Error(
+            `No component found for page Section ${JSON.stringify(section, null, 2)}`
+          );
+        }
+      }
+    })
+  }
+</Layout>

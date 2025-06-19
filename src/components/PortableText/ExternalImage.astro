@@ -1,0 +1,23 @@
+---
+import type { ExternalImageWithAlt } from "../../sanity/types";
+import { Image } from "astro:assets";
+
+interface Props
+  extends Pick<astroHTML.JSX.HTMLAttributes, "class" | "class:list"> {
+  node: ExternalImageWithAlt;
+}
+
+const { node, ...props } = Astro.props;
+---
+
+{
+  node.externalImage && (
+    <Image
+      {...props}
+      inferSize
+      src={node.externalImage}
+      alt={node.alternativeText || ""}
+      title={node.alternativeText}
+    />
+  )
+}
