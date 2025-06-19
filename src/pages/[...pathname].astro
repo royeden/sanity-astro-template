@@ -35,16 +35,14 @@ export const getStaticPaths = (async () => {
     .map(
       (pathname) =>
         ({
-          params: { pathname },
+          params: { pathname: pathname ? pathname : undefined },
         }) satisfies GetStaticPathsItem
     );
 
-  return [...pathnames, { params: { pathname: undefined } }];
+  return pathnames;
 }) satisfies GetStaticPaths;
 
 const { pathname } = Astro.params;
-
-console.log("pathname", pathname);
 
 const page = await getPage(`/${pathname ?? ""}`);
 

@@ -18,18 +18,14 @@ export const runQuery = makeSafeQueryRunner(async (query, { parameters }) => {
 
   const perspective = visualEditingEnabled ? "drafts" : "published";
 
-  const { result } = await sanityClient.fetch(
-    query,
-    { params: parameters },
-    {
-      filterResponse: false,
-      perspective,
-      resultSourceMap: visualEditingEnabled ? "withKeyArraySelector" : false,
-      stega: visualEditingEnabled,
-      ...(visualEditingEnabled ? { token } : {}),
-      useCdn: !visualEditingEnabled,
-    }
-  );
+  const { result } = await sanityClient.fetch(query, parameters, {
+    filterResponse: false,
+    perspective,
+    resultSourceMap: visualEditingEnabled ? "withKeyArraySelector" : false,
+    stega: visualEditingEnabled,
+    ...(visualEditingEnabled ? { token } : {}),
+    useCdn: !visualEditingEnabled,
+  });
 
   return result;
 });
