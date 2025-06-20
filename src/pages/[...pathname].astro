@@ -46,8 +46,6 @@ const { pathname } = Astro.params;
 
 const page = await getPage(`/${pathname ?? ""}`);
 
-console.log("data", page);
-
 type SectionSchemas = GetSanityTypedSchemasFor<"section">;
 
 type Sections = {
