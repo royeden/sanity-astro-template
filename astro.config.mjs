@@ -7,19 +7,18 @@ import react from "@astrojs/react";
 import { loadEnv } from "vite";
 
 import node from "@astrojs/node";
+import { SANITY_ENV } from "./sanity.env";
 
-/** @type {ImportMetaEnv} */
-// @ts-ignore
-const {
-  PUBLIC_SANITY_DATASET,
-  PUBLIC_SANITY_PROJECT_ID,
-  SANITY_API_READ_TOKEN,
-} = loadEnv(
-  // @ts-ignore
-  process.env.NODE_ENV,
-  process.cwd(),
-  ""
-);
+const { SANITY_API_READ_TOKEN } =
+  /** @type {ImportMetaEnv} */
+  (
+    loadEnv(
+      /** @type {string} */
+      (process.env.NODE_ENV),
+      process.cwd(),
+      ""
+    )
+  );
 
 // https://astro.build/config
 export default defineConfig({
@@ -37,20 +36,11 @@ export default defineConfig({
         access: "public",
         context: "server",
       }),
-      PUBLIC_SANITY_DATASET: envField.string({
-        access: "public",
-        context: "server",
-      }),
-      PUBLIC_SANITY_PROJECT_ID: envField.string({
-        access: "public",
-        context: "server",
-      }),
     },
   },
   integrations: [
     sanity({
-      dataset: PUBLIC_SANITY_DATASET,
-      projectId: PUBLIC_SANITY_PROJECT_ID,
+      ...SANITY_ENV,
       useCdn: false,
       studioBasePath: "/sanity/admin",
       stega: {

@@ -1,0 +1,37 @@
+---
+import { sanityClient } from "sanity:client";
+import { Image } from "astro:assets";
+import type { AstroSanityImageBuilder } from "./SanityImage/types";
+import type * as Sanity from "../sanity/types";
+import { getAstroSanityImage } from "./SanityImage/astroSanityImageLoader";
+
+interface Props
+  extends Pick<astroHTML.JSX.HTMLAttributes, "class" | "class:list">,
+    Sanity.ImageWithAlt {
+  imageBuilder?: AstroSanityImageBuilder;
+}
+
+const {
+  alternativeText,
+  class: className,
+  "class:list": classList,
+  imageBuilder,
+  ...node
+} = Astro.props;
+
+const image = getAstroSanityImage(sanityClient, node, { imageBuilder });
+---
+
+{
+  image && (
+    <Image
+      class={className}
+      class:list={classList}
+      height={image.height}
+      width={image.width}
+      src={image.src}
+      alt={alternativeText || ""}
+      title={alternativeText}
+    />
+  )
+}

@@ -1,0 +1,13 @@
+---
+import type { ImageWithAlt } from "../../sanity/types";
+import SanityImage from "../SanityImage.astro";
+
+interface Props
+  extends Pick<astroHTML.JSX.HTMLAttributes, "class" | "class:list"> {
+  node: ImageWithAlt;
+}
+
+const { node, ...props } = Astro.props;
+---
+
+<SanityImage {...node} {...props} />
